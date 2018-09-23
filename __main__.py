@@ -4,19 +4,21 @@ import io
 import zipfile
 import tempfile
 import re
-import sys
 
 api = auth()
 
-test = api.mentions_timeline()
-status = test[0]
+tweets = api.favorites()
 
-if 'media' in status.extended_entities:
-    screen_name = status.user.screen_name
+for status in tweets:
+    if hasattr(status, 'extended_entities') \
+            and 'media' in status.extended_entities \
+            and status.extended_entities['media'][0]['type'] == 'photo':
 
-    media = status.extended_entities['media'][0]
+        api.destroy_favorite(status.id)
 
-    if media['type'] == 'photo':
+        screen_name = status.user.screen_name
+        media = status.extended_entities['media'][0]
+
         m = re.search('^(@.+?)\s+?(.*)\s+?(http.+?)$', status.text)
 
         try:
