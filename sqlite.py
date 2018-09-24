@@ -1,5 +1,5 @@
-import sqlite3
+from src.classes.db import db
 
-conn = sqlite3.connect('kitty.db')
-c = conn.cursor()
+
+c = db.get_cursor()
 c.execute('''CREATE TABLE tweets (id int)''')

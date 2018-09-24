@@ -5,6 +5,7 @@ import zipfile
 import tempfile
 import re
 import sqlite3
+from src.classes.models.tweet import Tweet
 
 api = auth()
 
@@ -20,15 +21,10 @@ for status in tweets:
 
         api.destroy_favorite(status.id)
 
-        status_id = (status.id,)
+        tweet = Tweet(status.id)
 
-        exists = c.execute(
-            "SELECT * FROM tweets WHERE id=?", status_id
-        ).fetchone() is not None
-
-        if not exists:
-            c.execute("INSERT INTO tweets VALUES (?)", status_id)
-            conn.commit()
+        if not tweet.exists():
+            tweet.create()
         else:
             continue
 
