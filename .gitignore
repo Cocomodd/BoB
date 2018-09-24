@@ -2,3 +2,4 @@
 .idea/
 tweepy/
 __pycache__/
+*.db
