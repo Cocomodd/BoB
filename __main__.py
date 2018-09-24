@@ -13,7 +13,7 @@ tweets = api.favorites()
 conn = sqlite3.connect('kitty.db')
 c = conn.cursor()
 
-for status in tweets:
+for status in reversed(tweets):
     if hasattr(status, 'extended_entities') \
             and 'media' in status.extended_entities \
             and status.extended_entities['media'][0]['type'] == 'photo':
