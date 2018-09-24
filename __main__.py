@@ -4,10 +4,14 @@ import io
 import zipfile
 import tempfile
 import re
+import sqlite3
 
 api = auth()
 
 tweets = api.favorites()
+
+conn = sqlite3.connect('kitty.db')
+c = conn.cursor()
 
 for status in tweets:
     if hasattr(status, 'extended_entities') \
@@ -15,6 +19,18 @@ for status in tweets:
             and status.extended_entities['media'][0]['type'] == 'photo':
 
         api.destroy_favorite(status.id)
+
+        status_id = (status.id,)
+
+        exists = c.execute(
+            "SELECT * FROM tweets WHERE id=?", status_id
+        ).fetchone() is not None
+
+        if not exists:
+            c.execute("INSERT INTO tweets VALUES (?)", status_id)
+            conn.commit()
+        else:
+            continue
 
         screen_name = status.user.screen_name
         media = status.extended_entities['media'][0]
